@@ -1,0 +1,12 @@
+Wordpress plugin
+WP-CFM
+WP Mail SMTP
+W3 Total Cache
+TaxoPress
+Jetpack
+Google Analytics
+AWS for Wordpress
+AMP
+All-in-One WP Migration
+All in One SEO
+Askimet Anti-Spam

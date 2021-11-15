@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  db:
+    image: mariadb:10.3
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MARIADB_DATABASE: "${DB_DATABASE}"
+      MARIADB_USER: "${DB_USER}"
+      MARIADB_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app_net
+  wp:
+    image: wordpress:php7.4-fpm
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - wp-data:/var/www/html
+      - ./themes:/var/www/html/wp-content/themes
+      - ./plugins:/var/www/html/wp-content/plugins
+      - ./php/upload.ini:/usr/local/etc/php/conf.d/upload.ini
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: "${DB_USER}"
+      WORDPRESS_DB_PASSWORD: "${DB_PASSWORD}"
+      WORDPRESS_DB_NAME: "${DB_DATABASE}"
+    networks:
+      - app_net
+  web:
+    build: ./nginx
+    depends_on:
+      - wp
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - wp-data:/var/www/html
+      - ./themes:/var/www/html/wp-content/themes
+      - ./plugins:/var/www/html/wp-content/plugins
+      - ./logs:/var/log/nginx
+    networks:
+      - app_net
+volumes:
+  db-data: {}
+  wp-data: {}
+networks:
+  app_net: {}
